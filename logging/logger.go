@@ -15,7 +15,7 @@ var (
 
 func init() {
 	logger = logrus.New()
-	logger.Formatter = customFormatter{&logrus.JSONFormatter{
+	logger.Formatter = customFormatter{&logrus.TextFormatter{
 		TimestampFormat: time.RFC3339Nano,
 	}}
 	logger.Out = os.Stdout
@@ -23,11 +23,11 @@ func init() {
 
 // SetStandardFields sets up the service name, version, hostname and pid fields
 func SetStandardFields(service, version string) {
-	hostname, _ := os.Hostname()
+	//hostname, _ := os.Hostname()
 	standardFields = logrus.Fields{
-		"service":  service,
-		"version":  version,
-		"hostname": hostname,
+		"service": service,
+		"version": version,
+		//"hostname": hostname,
 	}
 
 	Info("Starting")
@@ -64,29 +64,38 @@ func ErrorLogger() (basicLogger *log.Logger, dispose func()) {
 	return
 }
 
-// Info logs an info level message with standard fields
 func Debug(msg string) {
 	logger.Debug(msg)
 }
 
-// Info logs an info level message with standard fields
 func Info(msg string) {
 	logger.Info(msg)
 }
 
-// Warn logs an warn level message with standard fields
+func Infof(msg string, things ...any) {
+	logger.Infof(msg, things...)
+}
+
 func Warn(msg string) {
 	logger.Warn(msg)
 }
 
-// Error logs an error level message with standard fields
 func Error(msg string) {
 	logger.Error(msg)
 }
 
-// Fatal logs an fatal level message with standard fields
 func Fatal(msg string) {
 	logger.Fatal(msg)
+}
+
+// WithField returns a logger with the supplied field added to the standard fields
+func WithField(key string, value any) *logrus.Entry {
+	return logger.WithField(key, value)
+}
+
+// WithError returns a logger with the supplied error added to the logs
+func WithError(err error) *logrus.Entry {
+	return logger.WithField("error", err)
 }
 
 func SubscribeToErrorChan(errors <-chan error) {

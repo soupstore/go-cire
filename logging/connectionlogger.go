@@ -15,7 +15,7 @@ type ConnectionLogger struct {
 
 func BuildConnectionLogger(connectionID string) *ConnectionLogger {
 	return &ConnectionLogger{
-		entry: logger.WithField("connection-id", connectionID),
+		entry: logger.WithField("conn-id", connectionID),
 	}
 }
 
@@ -37,4 +37,8 @@ func (c *ConnectionLogger) Error(msg string) {
 // Fatal logs an fatal level message with standard fields
 func (c *ConnectionLogger) Fatal(msg string) {
 	c.entry.Fatal(msg)
+}
+
+func (c *ConnectionLogger) WithError(err error) *logrus.Entry {
+	return c.entry.WithField("error", err)
 }
